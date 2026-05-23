@@ -1,4 +1,5 @@
-![Alt text](assets/ui-screenshot.png)
+<img src="assets/ui-screenshot.png" width="400">
+
 ![HTML](https://img.shields.io/badge/HTML-5-orange.svg) ![CSS](https://img.shields.io/badge/CSS-3-blue.svg) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 # Espresso · Adam's Tracker
@@ -32,14 +33,13 @@ Open the `.html` file directly in any browser or visit the hosted link.
 
 - **Vanilla HTML/CSS/JS** — zero dependencies
 - **localStorage** for persistent shot history and roast date
-- `inputmode="decimal"` for numeric keyboard on iOS
 
 ## My Setup
 
-Grinder - Eureka Mignon 55s
-Machine - De'Longhi La Specialista Arte (EC9155) 
-Recipe - 16g freshly roasted beans IN → 32g OUT · I am personally aiming for 25-26s 
-Storage - Fellow Atmos 
+- Grinder - Eureka Mignon 55s
+- Machine - De'Longhi La Specialista Arte (EC9155) 
+- Recipe - 16g freshly roasted beans IN → 32g OUT · I am personally aiming for 25-26s 
+- Storage - Fellow Atmos 
 
 ## License
 
