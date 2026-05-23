@@ -1,6 +1,6 @@
 <img src="assets/ui-screenshot.png" width="400">
 
-![HTML](https://img.shields.io/badge/HTML-5-orange.svg) ![CSS](https://img.shields.io/badge/CSS-3-blue.svg) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg)
+![HTML](https://img.shields.io/badge/HTML-5-orange.svg) ![CSS](https://img.shields.io/badge/CSS-3-blue.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 # Espresso · Adam's Tracker
 
