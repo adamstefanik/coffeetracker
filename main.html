@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Espresso Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    background: #111111;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 1.25rem 1rem 3rem;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.3px;
+  }
+  h1 span { color: #888; font-weight: 400; font-size: 14px; margin-left: 8px; vertical-align: middle; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-card {
+    background: #1e1e1e;
+    border-radius: 16px;
+    padding: 16px;
+    border: 0.5px solid rgba(255,255,255,0.07);
+  }
+  .stat-label { font-size: 13px; color: #888; margin-bottom: 5px; }
+  .stat-value { font-size: 28px; font-weight: 500; letter-spacing: -0.5px; }
+
+  .card {
+    background: #1e1e1e;
+    border-radius: 18px;
+    padding: 18px 16px;
+    margin-bottom: 12px;
+    border: 0.5px solid rgba(255,255,255,0.07);
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .field-full { grid-column: 1 / -1; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 6px;
+  }
+  input[type=text], input[type=number], input[type=date] {
+    width: 100%;
+    background: #2a2a2a;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    padding: 11px 13px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    font-family: inherit;
+  }
+  input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
+  input::placeholder { color: rgba(255,255,255,0.2); }
+  input:focus { border-color: rgba(255,255,255,0.25); background: #333; }
+
+  .rating-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .r-btn {
+    flex: 1;
+    min-width: 68px;
+    background: #2a2a2a;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+    padding: 8px 10px;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .r-btn.active-sweet    { background: #EAF3DE; color: #3B6D11; border-color: #3B6D11; }
+  .r-btn.active-podextrah{ background: #E6F1FB; color: #185FA5; border-color: #185FA5; }
+  .r-btn.active-preextrah{ background: #FAECE7; color: #993C1D; border-color: #993C1D; }
+  .r-btn.active-channeling{background: #FAEEDA; color: #854F0B; border-color: #854F0B; }
+
+  .btn-row { display: flex; gap: 8px; }
+  .btn-add {
+    flex: 1;
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    color: #111;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s;
+  }
+  .btn-add:active { opacity: 0.75; }
+  .btn-secondary {
+    background: #2a2a2a;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: #888;
+    font-size: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .err { font-size: 12px; color: #E24B4A; margin-top: 8px; display: none; }
+
+  .log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .btn-clear-all {
+    background: transparent;
+    border: none;
+    color: #E24B4A;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+  }
+
+  .shot-row {
+    background: #252525;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 10px;
+    align-items: start;
+  }
+  .shot-day {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+    text-align: center;
+  }
+  .shot-grind {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: #fff;
+    text-align: center;
+    margin-top: -2px;
+  }
+  .shot-info { }
+  .shot-numbers {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 4px;
+  }
+  .shot-numbers .hit { color: #97C459; font-weight: 500; }
+  .shot-note { font-size: 12px; color: #666; }
+  .shot-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .badge-sweet     { background: #EAF3DE; color: #3B6D11; }
+  .badge-podextrah { background: #E6F1FB; color: #185FA5; }
+  .badge-preextrah { background: #FAECE7; color: #993C1D; }
+  .badge-channeling{ background: #FAEEDA; color: #854F0B; }
+  .btn-del {
+    background: #333;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    color: #666;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+  }
+  .empty-state {
+    text-align: center;
+    color: #555;
+    font-size: 14px;
+    padding: 2rem 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Espresso <span>Adam's tracker</span></h1>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">Total shots</div>
+      <div class="stat-value" id="stat-total">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sweet spot</div>
+      <div class="stat-value" id="stat-sweet">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Last ratio</div>
+      <div class="stat-value" id="stat-ratio">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Days since roast</div>
+      <div class="stat-value" id="stat-days">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">New shot</div>
+    <div class="fields">
+      <div class="field-full">
+        <label>Roast date</label>
+        <input type="date" id="roast-date">
+      </div>
+      <div>
+        <label>Grind</label>
+        <input type="text" id="grind" placeholder="" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*">
+      </div>
+      <div>
+        <label>IN (g)</label>
+        <input type="text" id="dose-in" placeholder="" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*">
+      </div>
+      <div>
+        <label>OUT (g)</label>
+        <input type="text" id="dose-out" placeholder="" inputmode="decimal" pattern="[0-9]*[.,]?[0-9]*">
+      </div>
+      <div>
+        <label>Time (s)</label>
+        <input type="text" id="time" placeholder="" inputmode="numeric" pattern="[0-9]*">
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label>Rating</label>
+      <div class="rating-row">
+        <button class="r-btn" id="btn-podextrah" onclick="setRating('podextrah')">Under</button>
+        <button class="r-btn" id="btn-sweet" onclick="setRating('sweet')">Sweet spot</button>
+        <button class="r-btn" id="btn-preextrah" onclick="setRating('preextrah')">Over</button>
+        <button class="r-btn" id="btn-channeling" onclick="setRating('channeling')">Channeling</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-add" onclick="addShot()">Add shot ↗</button>
+      <button class="btn-secondary" onclick="clearForm()">Clear</button>
+    </div>
+    <div class="err" id="form-error">Fill in grind, OUT and time.</div>
+  </div>
+
+  <div id="log-section" style="display:none;">
+    <div class="log-header">
+      <span style="font-size:13px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.5px;">History</span>
+      <button class="btn-clear-all" onclick="clearAll()">Clear all</button>
+    </div>
+    <div id="log-body"></div>
+  </div>
+
+</div>
+
+<script>
+function parseNum(v) { return parseFloat(String(v).replace(",",".")); }
+let shots = [];
+try { shots = JSON.parse(localStorage.getItem('espresso_shots_v2') || '[]'); } catch(e) {}
+let selectedRating = '';
+
+const rc = {
+  podextrah:  { label: 'Under',   cls: 'badge-podextrah' },
+  sweet:      { label: 'Sweet spot', cls: 'badge-sweet' },
+  preextrah:  { label: 'Over',   cls: 'badge-preextrah' },
+  channeling: { label: 'Channeling', cls: 'badge-channeling' }
+};
+
+function setRating(r) {
+  selectedRating = selectedRating === r ? '' : r;
+  ['podextrah','sweet','preextrah','channeling'].forEach(k => {
+    document.getElementById('btn-' + k).className =
+      'r-btn' + (k === selectedRating ? ' active-' + k : '');
+  });
+}
+
+function getDays(d) {
+  if (!d) return null;
+  return Math.floor((Date.now() - new Date(d).getTime()) / 86400000);
+}
+
+function addShot() {
+  const grind = document.getElementById('grind').value;
+  const out   = document.getElementById('dose-out').value;
+  const time  = document.getElementById('time').value;
+  const err   = document.getElementById('form-error');
+  if (!grind || !out || !time) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  const roastDate = document.getElementById('roast-date').value;
+  if (roastDate) try { localStorage.setItem('espresso_roast_date', roastDate); } catch(e) {}
+  shots.push({
+    id: Date.now(),
+    roastDate: roastDate,
+    grind:   parseNum(grind),
+    doseIn:  parseNum(document.getElementById('dose-in').value || 16),
+    doseOut: parseNum(out),
+    time:    parseInt(time),
+    rating:  selectedRating,
+    note:    ''
+  });
+  save(); render();
+try { const saved = localStorage.getItem('espresso_roast_date'); if (saved) document.getElementById('roast-date').value = saved; } catch(e) {} clearForm();
+}
+
+function clearForm() {
+  ['grind','dose-in','dose-out','time'].forEach(id =>
+    document.getElementById(id).value = '');
+  document.getElementById('form-error').style.display = 'none';
+  selectedRating = '';
+  setRating('');
+}
+
+function deleteShot(id) {
+  shots = shots.filter(s => s.id !== id);
+  save(); render();
+try { const saved = localStorage.getItem('espresso_roast_date'); if (saved) document.getElementById('roast-date').value = saved; } catch(e) {}
+}
+
+function clearAll() {
+  if (!shots.length) return;
+  if (confirm('Clear all shots?')) { shots = []; save(); render();
+try { const saved = localStorage.getItem('espresso_roast_date'); if (saved) document.getElementById('roast-date').value = saved; } catch(e) {} }
+}
+
+function save() {
+  try { localStorage.setItem('espresso_shots_v2', JSON.stringify(shots)); } catch(e) {}
+}
+
+function render() {
+  document.getElementById('stat-total').textContent = shots.length;
+  const sweets = shots.filter(s => s.rating === 'sweet');
+  document.getElementById('stat-sweet').textContent =
+    sweets.length ? sweets[sweets.length-1].grind.toFixed(1) : '—';
+  if (shots.length) {
+    const last = shots[shots.length-1];
+    document.getElementById('stat-ratio').textContent =
+      '1:' + (last.doseOut / last.doseIn).toFixed(2);
+    const d = getDays(last.roastDate);
+    document.getElementById('stat-days').textContent = d !== null ? d + 'd' : '—';
+  } else {
+    document.getElementById('stat-ratio').textContent = '—';
+    document.getElementById('stat-days').textContent = '—';
+  }
+
+  const logSection = document.getElementById('log-section');
+  const body = document.getElementById('log-body');
+  logSection.style.display = shots.length ? 'block' : 'none';
+  body.innerHTML = '';
+
+  if (!shots.length) return;
+
+  [...shots].reverse().forEach(s => {
+    const days  = getDays(s.roastDate);
+    const ratio = (s.doseOut / s.doseIn).toFixed(2);
+    const inZone = s.doseOut >= 30 && s.doseOut <= 34;
+    const badge = s.rating && rc[s.rating]
+      ? `<span class="badge ${rc[s.rating].cls}">${rc[s.rating].label}</span>`
+      : '';
+    const div = document.createElement('div');
+    div.className = 'shot-row';
+    div.innerHTML = `
+      <div>
+        <div class="shot-grind">${s.grind.toFixed(1)}</div>
+        <div class="shot-day">${days !== null ? days + 'd' : '—'}</div>
+      </div>
+      <div class="shot-info">
+        <div class="shot-numbers">
+          ${s.doseIn}g → <span class="${inZone ? 'hit' : ''}">${s.doseOut}g</span>
+          · ${s.time}s · <span style="color:#666;">1:${ratio}</span>
+        </div>
+      </div>
+      <div class="shot-actions">
+        ${badge}
+        <button class="btn-del" onclick="deleteShot(${s.id})" aria-label="Delete">×</button>
+      </div>
+    `;
+    body.appendChild(div);
+  });
+}
+
+render();
+try { const saved = localStorage.getItem('espresso_roast_date'); if (saved) document.getElementById('roast-date').value = saved; } catch(e) {}
+</script>
+</body>
+</html>
